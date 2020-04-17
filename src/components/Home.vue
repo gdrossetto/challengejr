@@ -1,21 +1,25 @@
 <template>
   <div class="app-container" id="homepage">
     <v-app-bar fixed dense style="background-color:#fcbe03">
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
       <v-toolbar-title>Blog</v-toolbar-title>
     </v-app-bar>
 
-    <h1 style="padding:60px">Últimas Postagens</h1>
+    <h1 style="padding:100px">Últimas Postagens</h1>
 
     <div>
       <v-text-field
         color="orange"
         style="width:50vw;margin:auto;display:inline-block;"
         label="Procurar postagem:"
+        v-model="searchQuery"
       ></v-text-field>
-      <v-btn icon color="orange">
+      <v-btn @click="getEventosPorNome(searchQuery)" icon color="orange">
         <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <v-btn @click="getEventos()" icon color="green">
+        <v-icon>mdi-reload</v-icon>
       </v-btn>
     </div>
     <br />
@@ -41,39 +45,6 @@
 </template>
 
 <script>
-/*
-import Vue from "vue";
-
-var HomePage = new Vue({
-  el: "#homepage",
-  data: function() {
-    return {
-      posts: posts
-    };
-  },
-  methods: {
-    getEventos: async function() {
-      var vm = this;
-      try {
-        let response = await fetch("http://192.168.0.10:8080/eventos/", {
-          mode: "cors"
-        });
-        let responseJson = await response.json();
-        vm.posts = responseJson;
-        console.log(this.posts[0].name);
-        return responseJson;
-      } catch (err) {
-        console.error(err.message);
-      }
-    }
-  },
-  mounted: function() {
-    this.getEventos();
-  }
-});
-var posts = [];
-export default HomePage;*/
-
 export default {
   name: "HomePage",
   props: {
@@ -81,7 +52,8 @@ export default {
   },
   data: () => {
     return {
-      posts: posts
+      posts: posts,
+      searchQuery: ""
     };
   },
   methods: {
@@ -97,14 +69,25 @@ export default {
         let responseJson = await response.json();
         console.log(responseJson);
         this.posts = responseJson;
-        return responseJson;
       } catch (err) {
         console.error(err.message);
       }
+    },
+    async getEventosPorNome(nome) {
+      try {
+        let response = await fetch(
+          "http://192.168.0.10:8080/buscaEventoPorNome?nome=" + nome
+        );
+        let responseJson = await response.json();
+        this.posts = responseJson;
+        return responseJson;
+      } catch (error) {
+        console.error(error);
+      }
     }
   },
-  mounted() {
-    this.getEventos();
+  created() {
+    setTimeout(() => this.getEventos(), 400);
   }
 };
 var posts = [];

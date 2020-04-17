@@ -13,7 +13,11 @@
           name="input-7-1"
           label="Digite o conteúdo do seu post aqui!"
         ></v-textarea>
-        <v-btn v-on:click="getPost(titulo,desc)" color="success" class="mr-4">Salvar</v-btn>
+        <v-btn
+          v-on:click="createPost(titulo,desc,20,'',new Date(),'')"
+          color="success"
+          class="mr-4"
+        >Salvar</v-btn>
         <v-btn to="/" color="error" class="mr-4">Cancelar</v-btn>
       </v-form>
     </div>
@@ -36,8 +40,26 @@ export default {
     getPost(titulo, desc) {
       console.log(titulo);
       console.log(desc);
+    },
+    createPost(name, desc, capacidade, local, date, photo) {
+      fetch("http://192.168.0.10:8080/eventos", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: name,
+          capacidade: capacidade,
+          local: local,
+          data: date,
+          descricao: desc,
+          foto: photo
+        })
+      }).finally(this.$router.push("/"));
     }
   },
+
   mounted() {}
 };
 </script>

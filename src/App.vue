@@ -7,10 +7,6 @@
 </template>
 
 <script>
-//import HomePage from "./components/Home";
-//import Vue from "vue";
-//import VueRouter from "vue-router";
-
 export default {
   name: "App",
 
