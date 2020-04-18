@@ -9,11 +9,15 @@ Vue.use(VueRouter);
 Vue.config.productionTip = false;
 
 const routes = [
+  //declaração das rotas para navegação
   { path: "/", component: HomePage },
   { path: "/list", component: PostList },
-  { path: "/criar_post", component: CriarPost },
+  { path: "/criar_post/:titulo", component: CriarPost },
 ];
 const router = new VueRouter({
+  scrollBehavior() {
+    return { x: 0, y: 0 };
+  },
   routes,
 });
 

@@ -60,7 +60,9 @@ export default {
     }
   },
 
-  mounted() {}
+  mounted() {
+    this.titulo = this.$route.params.titulo;
+  }
 };
 </script>
 
