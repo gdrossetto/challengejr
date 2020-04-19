@@ -149,8 +149,7 @@ app.post("/editaCategoria", async (req, res) => {
 app.delete("/deletaCategoria", async (req, res) => {
   let result = {};
   try {
-    const reqJson = req.body;
-    await deletaCategoria(reqJson.id);
+    await deletaCategoria(req.query.id);
     result.success = true;
   } catch (e) {
     console.error(e.message);

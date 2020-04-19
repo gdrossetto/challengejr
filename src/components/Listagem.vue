@@ -8,13 +8,13 @@
         style="width:50vw;margin:auto;display:inline-block;"
         label="Procurar postagem:"
       ></v-text-field>
-      <v-btn icon color="orange">
+      <v-btn icon color="#37125c">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </div>
     <br />
 
-    <v-btn outlined color="orange">
+    <v-btn to="/criar_post" outlined color="#37125c">
       <v-icon>mdi-plus</v-icon>Criar postagem
     </v-btn>
 
@@ -29,6 +29,22 @@
               Postagem feita em {{ post.criado_em }}
             </p>
             <p>{{ post.resumo }}</p>
+            <div style="justify-content:space-evenly">
+              <v-btn
+                :to="{ path: '/post/' + post.id }"
+                icon
+                color="green"
+                style="margin-right:20px"
+              >
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+              <v-btn icon color="blue" style="margin-right:20px">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn icon color="red">
+                <v-icon>mdi-trash-can-outline</v-icon>
+              </v-btn>
+            </div>
           </v-card>
         </div>
       </div>

@@ -1,31 +1,25 @@
 <template>
   <div class="app-container" id="homepage">
-    <h1 style="padding:100px">Últimas Postagens</h1>
-
-    <div>
+    <div style="padding-top:100px">
       <v-text-field
-        color="orange"
+        color="#37125c"
         class="home-searchbar"
         label="Procurar postagem:"
         v-model="searchQuery"
       ></v-text-field>
-      <v-btn @click="getPostsPorTitulo(searchQuery)" icon color="orange">
+      <v-btn @click="getPostsPorTitulo(searchQuery)" icon color="#37125c">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
-      <v-btn @click="getPosts()" icon color="green">
+      <v-btn @click="getPosts()" icon color="orange">
         <v-icon>mdi-reload</v-icon>
       </v-btn>
     </div>
     <br />
 
-    <v-btn to="/criar_post" outlined color="orange">
-      <v-icon>mdi-plus</v-icon>Criar post
-    </v-btn>
-
     <br />
     <br />
     <div style="width:80vw; display:inline-block">
-      <div class="blog-flexcontainer">
+      <div class="blog-gridcontainer">
         <div v-for="post in posts" :key="post.id">
           <v-hover v-slot:default="{ hover }">
             <v-card
@@ -40,7 +34,7 @@
               <p style="font-size:12px;font-color:light-grey">
                 Postagem feita em {{ post.criado_em }}
               </p>
-              <p>{{ post.descricao }}</p>
+              <p>{{ post.resumo }}</p>
             </v-card>
           </v-hover>
         </div>
@@ -117,7 +111,7 @@ var posts = [];
   min-height: 150px;
 }
 
-.blog-flexcontainer {
+.blog-gridcontainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, 280px);
   justify-content: space-evenly;

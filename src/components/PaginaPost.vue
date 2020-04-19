@@ -1,14 +1,17 @@
 <template>
   <div class="app-container" id="paginapost">
     <div style="margin-top:10vh">
-      <p style="text-align:center;font-size:12px">{{ post.categoria_nome }}</p>
+      <p style="text-align:center;font-size:14px">{{ post.categoria_nome }}</p>
       <h1>{{ post.titulo }}</h1>
+      <p style="color:grey">{{ post.resumo }}</p>
       <v-divider style="margin:auto;width:70vw;padding-top:0.8em"></v-divider>
       <v-subheader style="display:inline-block"
         >Publicado em {{ post.criado_em }}</v-subheader
       >
-      <p style="color:grey">{{ post.descricao }}</p>
     </div>
+    <p style="color:black;white-space:pre-line;font-size:22;margin:3vw">
+      {{ post.descricao }}
+    </p>
   </div>
 </template>
 

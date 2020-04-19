@@ -1,8 +1,21 @@
 <template>
   <v-app id="app">
-    <v-app-bar fixed dense style="background-color:#fcbe03">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>Blog</v-toolbar-title>
+    <v-app-bar fixed dense style="background-color:#37125c;position:absolute">
+      <v-row>
+        <v-col>
+          <v-app-bar-nav-icon
+            style="color:white"
+            @click="drawer = !drawer"
+          ></v-app-bar-nav-icon>
+        </v-col>
+        <v-col>
+          <v-toolbar-title
+            style="color:white;position:relative;text-align:center;margin-top:0.5em"
+            >Desafio Ez.Devs</v-toolbar-title
+          >
+        </v-col>
+        <v-col></v-col>
+      </v-row>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
@@ -13,12 +26,14 @@
           link
           :to="item.path"
         >
-          <v-list-item-icon>
+          <v-list-item-icon style="color:#37125c">
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item-title style="color:#37125c">{{
+              item.title
+            }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -43,6 +58,11 @@ export default {
       items: [
         { title: "Home", icon: "mdi-home", path: "/" },
         { title: "Lista ", icon: "mdi-format-list-bulleted", path: "/lista" },
+        {
+          title: "Categorias ",
+          icon: "mdi-format-list-bulleted",
+          path: "/categorias",
+        },
         {
           title: "Criar Post ",
           icon: "mdi-newspaper-plus",

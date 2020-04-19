@@ -6,6 +6,7 @@ import HomePage from "./components/Home.vue";
 import PostList from "./components/Listagem.vue";
 import CriarPost from "./components/CriarPost.vue";
 import PaginaPost from "./components/PaginaPost.vue";
+import ListaCategorias from "./components/Categorias.vue";
 Vue.use(VueRouter);
 Vue.config.productionTip = false;
 
@@ -14,6 +15,7 @@ const routes = [
   { path: "/", component: HomePage },
   { path: "/lista", component: PostList },
   { path: "/criar_post", component: CriarPost },
+  { path: "/categorias", component: ListaCategorias },
   { path: "/post/:id", component: PaginaPost },
 ];
 const router = new VueRouter({
