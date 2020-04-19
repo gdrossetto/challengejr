@@ -1,11 +1,5 @@
 <template>
   <div class="app-container" id="homepage">
-    <v-app-bar fixed dense style="background-color:#fcbe03">
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Blog</v-toolbar-title>
-    </v-app-bar>
-
     <h1 style="padding:100px">Últimas Postagens</h1>
 
     <div>
@@ -15,7 +9,7 @@
         label="Procurar postagem:"
         v-model="searchQuery"
       ></v-text-field>
-      <v-btn @click="getPostsPorNome(searchQuery)" icon color="orange">
+      <v-btn @click="getPostsPorTitulo(searchQuery)" icon color="orange">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
       <v-btn @click="getPosts()" icon color="green">
@@ -32,18 +26,20 @@
     <br />
     <div style="width:80vw; display:inline-block">
       <div class="blog-flexcontainer">
-        <div v-for="post in posts" :key="post.name">
+        <div v-for="post in posts" :key="post.id">
           <v-hover v-slot:default="{ hover }">
             <v-card
-              :to="{path: '/criar_post/'+post.name}"
+              :to="{ path: '/post/' + post.id }"
               @click="testCard()"
-              :elevation="hover ? 12 : 4"
+              :elevation="hover ? 22 : 0"
               shaped
               raised
               class="blog-div"
             >
-              <h3 style="color:black">{{ post.name }}</h3>
-              <p style="font-size:12px;font-color:light-grey">Postagem feita em {{ post.data }}</p>
+              <h3 style="color:black">{{ post.titulo }}</h3>
+              <p style="font-size:12px;font-color:light-grey">
+                Postagem feita em {{ post.criado_em }}
+              </p>
               <p>{{ post.descricao }}</p>
             </v-card>
           </v-hover>
@@ -57,33 +53,33 @@
 export default {
   name: "HomePage",
   props: {
-    msg: String
+    msg: String,
   },
   data: () => {
     return {
       posts: posts,
-      searchQuery: ""
+      searchQuery: "",
     };
   },
   methods: {
-    createPost(title, desc, date) {
-      posts.push({ title: title, desc: desc, date: date });
-    },
     async getPosts() {
       try {
-        let response = await fetch("http://192.168.0.10:8080/eventos/", {
-          mode: "cors"
-        });
+        let response = await fetch(
+          "http://192.168.0.10:5000/buscaPostsMaisNovo",
+          {
+            mode: "cors",
+          }
+        );
         let responseJson = await response.json();
         this.posts = responseJson;
       } catch (err) {
         console.error(err.message);
       }
     },
-    async getPostsPorNome(nome) {
+    async getPostsPorTitulo(titulo) {
       try {
         let response = await fetch(
-          "http://192.168.0.10:8080/buscaEventoPorNome?nome=" + nome
+          "http://192.168.0.10:5000/buscaPostPorTitulo?titulo=" + titulo
         );
         let responseJson = await response.json();
         this.posts = responseJson;
@@ -91,11 +87,11 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    }
+    },
   },
   created() {
     setTimeout(() => this.getPosts(), 400);
-  }
+  },
 };
 var posts = [];
 </script>
@@ -111,10 +107,10 @@ var posts = [];
   margin-bottom: 1.5em;
   left: 0;
   right: 0;
-  /*
+
   border-color: black;
   border-width: 1.5px;
-  border-style: solid;*/
+  border-style: solid;
   white-space: initial;
   padding: 1.5em;
   border-radius: 20px;

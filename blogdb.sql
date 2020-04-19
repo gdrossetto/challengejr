@@ -26,7 +26,7 @@ from post
 order by criado_em asc;
 
 /* Para buscar por categoria */
-select p.*
+select p.* , c.nome
 from post as p inner join categoria as c on p.categoria_id = c.id
 where p.categoria_id = 4
 order by criado_em desc;

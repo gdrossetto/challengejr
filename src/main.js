@@ -5,20 +5,23 @@ import VueRouter from "vue-router";
 import HomePage from "./components/Home.vue";
 import PostList from "./components/Listagem.vue";
 import CriarPost from "./components/CriarPost.vue";
+import PaginaPost from "./components/PaginaPost.vue";
 Vue.use(VueRouter);
 Vue.config.productionTip = false;
 
 const routes = [
   //declaração das rotas para navegação
   { path: "/", component: HomePage },
-  { path: "/list", component: PostList },
-  { path: "/criar_post/:titulo", component: CriarPost },
+  { path: "/lista", component: PostList },
+  { path: "/criar_post", component: CriarPost },
+  { path: "/post/:id", component: PaginaPost },
 ];
 const router = new VueRouter({
   scrollBehavior() {
     return { x: 0, y: 0 };
   },
   routes,
+  mode: "history",
 });
 
 new Vue({

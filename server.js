@@ -2,7 +2,11 @@ var express = require("express");
 var path = require("path");
 var serveStatic = require("serve-static");
 var { Client } = require("pg");
+var cors = require("cors");
 var app = express();
+var bodyParser = require("body-parser");
+app.use(bodyParser.json());
+app.use(cors());
 app.use(serveStatic(path.join(__dirname, "dist")));
 
 const client = new Client({
@@ -18,13 +22,13 @@ const client = new Client({
   port: 5432,
 });
 
-app.get("/postsMaisNovo", async (req, res) => {
+app.get("/buscaPostsMaisNovo", async (req, res) => {
   const rows = await buscarPostsPorDataDecrescente();
   res.setHeader("content-type", "application/json");
   res.send(JSON.stringify(rows));
 });
 
-app.get("/postsMaisAntigo", async (req, res) => {
+app.get("/buscaPostsMaisAntigo", async (req, res) => {
   const rows = await buscarPostsPorDataCrescente();
   res.setHeader("content-type", "application/json");
   res.send(JSON.stringify(rows));
@@ -42,6 +46,12 @@ app.get("/buscaPostPorCategoria", async (req, res) => {
   res.send(JSON.stringify(rows));
 });
 
+app.get("/buscaPostPorId", async (req, res) => {
+  const rows = await buscaPostPorId(req.query.id);
+  res.setHeader("content-type", "application/json");
+  res.send(JSON.stringify(rows));
+});
+
 app.get("/listaCategorias", async (req, res) => {
   const rows = await listaCategorias();
   res.setHeader("content-type", "application/json");
@@ -52,6 +62,7 @@ app.post("/criaPost", async (req, res) => {
   let result = {};
   try {
     const reqJson = req.body;
+    console.log(req.body);
     await criaPost(
       reqJson.titulo,
       reqJson.descricao,
@@ -167,7 +178,7 @@ async function start() {
 async function buscarPostsPorDataDecrescente() {
   try {
     const results = await client.query(
-      "SELECT *, to_char( criado_em, 'DD/MM/YYYY') as criado_em from post order by id desc;"
+      "SELECT p.*,c.nome as categoria_nome, to_char( criado_em, 'DD/MM/YYYY') as criado_em from post as p inner join categoria as c on p.categoria_id = c.id order by p.id desc;"
     );
     return results.rows;
   } catch (e) {
@@ -178,7 +189,7 @@ async function buscarPostsPorDataDecrescente() {
 async function buscarPostsPorDataCrescente() {
   try {
     const results = await client.query(
-      "SELECT *, to_char( criado_em, 'DD/MM/YYYY') as criado_em from post order by id asc;"
+      "SELECT p.*,c.nome as categoria_nome, to_char( criado_em, 'DD/MM/YYYY') as criado_em from post as p inner join categoria as c on p.categoria_id = c.id order by p.id asc;"
     );
     return results.rows;
   } catch (e) {
@@ -190,8 +201,21 @@ async function buscarPostsPorDataCrescente() {
 async function buscaPostPorTitulo(titulo) {
   try {
     const results = await client.query(
-      "SELECT *, to_char( criado_em, 'DD/MM/YYYY') as criado_em from post WHERE position(LOWER($1) in LOWER(titulo)) > 0 order by criado_em desc;",
+      "SELECT p.*, c.nome as categoria_nome, to_char( p.criado_em, 'DD/MM/YYYY') as criado_em from post as p inner join categoria as c on p.categoria_id = c.id WHERE position(LOWER($1) in LOWER(titulo)) > 0 order by p.id desc;",
       [titulo]
+    );
+    return results.rows;
+  } catch (e) {
+    console.error("Falha na query: " + e.message);
+    return false;
+  }
+}
+
+async function buscaPostPorId(id) {
+  try {
+    const results = await client.query(
+      "SELECT p.*, c.nome as categoria_nome, to_char( p.criado_em, 'DD/MM/YYYY') as criado_em from post as p inner join categoria as c on p.categoria_id = c.id WHERE p.id = $1 order by p.id desc;",
+      [id]
     );
     return results.rows;
   } catch (e) {
@@ -202,7 +226,7 @@ async function buscaPostPorTitulo(titulo) {
 
 async function criaPost(titulo, descricao, resumo, data, categoria_id) {
   try {
-    //await client.query(" SET datestyle = dmy;");
+    await client.query(" SET datestyle = dmy;");
     await client.query(
       "INSERT INTO post (titulo,descricao,resumo,criado_em,categoria_id) VALUES ($1,$2,$3,$4,$5);",
       [titulo, descricao, resumo, data, categoria_id]
@@ -285,7 +309,7 @@ async function deletaCategoria(id) {
 async function buscaPostPorCategoria(categoria_id) {
   try {
     const results = await client.query(
-      "SELECT p.* from post as p inner join categoria as c on p.categoria_id = c.id where p.categoria_id = $1 order by criado_em desc;",
+      "SELECT p.*,c.nome as categoria_nome from post as p inner join categoria as c on p.categoria_id = c.id where p.categoria_id = $1 order by criado_em desc;",
       [categoria_id]
     );
     return results.rows;

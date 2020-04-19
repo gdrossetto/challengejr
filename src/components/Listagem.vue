@@ -1,12 +1,6 @@
 <template>
   <div class="app-container" id="postlist">
-    <v-app-bar fixed dense style="background-color:#fcbe03">
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title>Blog</v-toolbar-title>
-    </v-app-bar>
-
-    <h1 style="padding:60px">Últimas Postagens</h1>
+    <h1 style="padding:60px">Listagem de posts</h1>
 
     <div>
       <v-text-field
@@ -20,17 +14,7 @@
     </div>
     <br />
 
-    <v-btn
-      v-on:click="
-        createPost(
-          'Post Criado pelo botão',
-          'Com isso podemos observar que eu sou muito bom em Vue!',
-          '15/04/2020'
-        )
-      "
-      outlined
-      color="orange"
-    >
+    <v-btn outlined color="orange">
       <v-icon>mdi-plus</v-icon>Criar postagem
     </v-btn>
 
@@ -38,11 +22,13 @@
     <br />
     <div style="width:80vw; display:inline-block">
       <div class="blog-flexcontainer">
-        <div v-for="post in posts" :key="post.name">
+        <div v-for="post in posts" :key="post.id">
           <v-card shaped raised class="blog-div">
-            <h3 style="color:black">{{ post.name }}</h3>
-            <p style="font-size:12px;font-color:light-grey">Postagem feita em {{ post.data }}</p>
-            <p>{{ post.descricao }}</p>
+            <h3 style="color:black">{{ post.titulo }}</h3>
+            <p style="font-size:12px;font-color:light-grey">
+              Postagem feita em {{ post.criado_em }}
+            </p>
+            <p>{{ post.resumo }}</p>
           </v-card>
         </div>
       </div>
@@ -54,11 +40,11 @@
 export default {
   name: "PostList",
   props: {
-    msg: String
+    msg: String,
   },
   data: () => {
     return {
-      posts: posts
+      posts: posts,
     };
   },
   methods: {
@@ -67,9 +53,12 @@ export default {
     },
     async getEventos() {
       try {
-        let response = await fetch("http://192.168.0.10:8080/eventos/", {
-          mode: "cors"
-        });
+        let response = await fetch(
+          "http://192.168.0.10:5000/buscaPostsMaisNovo/",
+          {
+            mode: "cors",
+          }
+        );
         console.log(response);
         let responseJson = await response.json();
         console.log(responseJson);
@@ -78,11 +67,11 @@ export default {
       } catch (err) {
         console.error(err.message);
       }
-    }
+    },
   },
   mounted() {
     this.getEventos();
-  }
+  },
 };
 var posts = [];
 </script>
@@ -104,12 +93,12 @@ var posts = [];
   white-space: initial;
   padding: 1.5em;
   border-radius: 20px;
-  min-height: 150px;
+  min-height: 100px;
 }
 
 .blog-flexcontainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 280px);
+  grid-template-columns: repeat(auto-fit, 80vw);
   justify-content: space-evenly;
 }
 </style>
