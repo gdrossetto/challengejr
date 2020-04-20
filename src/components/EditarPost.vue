@@ -87,24 +87,7 @@ export default {
         console.error(err.message);
       }
     },
-    criaPost(titulo, descricao, resumo, criado_em, categoria_id) {
-      let data = new Date();
-      let dataCriacao = data.toLocaleString();
-      fetch("https://challengejr.herokuapp.com/criaPost", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          titulo: titulo,
-          descricao: descricao,
-          resumo: resumo,
-          criado_em: dataCriacao,
-          categoria_id: categoria_id,
-        }),
-      }).finally(this.$router.push("/"));
-    },
+
     async editaPost(titulo, descricao, resumo, categoria_id, id) {
       fetch("https://challengejr.herokuapp.com/editaPost", {
         method: "POST",

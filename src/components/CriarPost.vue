@@ -32,12 +32,11 @@
           no-resize
         ></v-textarea>
         <v-btn
-          v-on:click="
-            criaPost(titulo, descricao, resumo, new Date(), id_categoria)
-          "
+          v-on:click="criaPost(titulo, descricao, resumo, id_categoria)"
           color="success"
           class="mr-4"
           outlined
+          :disabled="id_categoria != 0 ? false : true"
           >Salvar</v-btn
         >
         <v-btn to="/" color="error" class="mr-4" outlined>Cancelar</v-btn>
@@ -47,6 +46,8 @@
 </template>
 
 <script>
+import moment from "moment";
+
 export default {
   name: "CriarPost",
   props: {
@@ -62,6 +63,18 @@ export default {
     };
   },
   methods: {
+    /*checarCamposPreenchidos() {
+      if (
+        this.titulo != "" &&
+        this.descricao != "" &&
+        this.resumo != "" &&
+        this.id_categoria != 0
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },*/
     async listaCategorias() {
       try {
         let response = await fetch(
@@ -77,9 +90,7 @@ export default {
         console.error(err.message);
       }
     },
-    criaPost(titulo, descricao, resumo, criado_em, categoria_id) {
-      let data = new Date();
-      let dataCriacao = data.toLocaleString();
+    criaPost(titulo, descricao, resumo, categoria_id) {
       fetch("https://challengejr.herokuapp.com/criaPost", {
         method: "POST",
         headers: {
@@ -90,7 +101,7 @@ export default {
           titulo: titulo,
           descricao: descricao,
           resumo: resumo,
-          criado_em: dataCriacao,
+          criado_em: moment().format("DD/MM/YYYY"),
           categoria_id: categoria_id,
         }),
       }).finally(this.$router.push("/"));

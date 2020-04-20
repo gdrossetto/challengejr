@@ -5,7 +5,7 @@ var { Client } = require("pg");
 var cors = require("cors");
 var app = express();
 var bodyParser = require("body-parser");
-
+var moment = require("moment");
 app.use(bodyParser.json());
 app.use(cors());
 app.use(serveStatic(path.join(__dirname, "dist"))); //rodando webapp no servidor após build
@@ -147,6 +147,7 @@ app.post("/editaCategoria", async (req, res) => {
     res.send(JSON.stringify(result.success));
   }
 });
+console.log(moment().format("DD/MM/YYYY"));
 
 app.delete("/deletaCategoria", async (req, res) => {
   let result = {};
