@@ -2,30 +2,32 @@
   <div class="app-container" id="criarpost">
     <div style="margin-top:10vh">
       <v-form ref="form" lazy-validation>
-        <h2>Criar post</h2>
+        <h2>Editar post</h2>
         <v-select
           class="form-position"
-          v-model="id_categoria"
+          v-model="post.categoria_id"
           :items="categorias"
           item-value="id"
           item-text="nome"
           label="Categoria"
         ></v-select>
         <v-text-field
-          v-model="titulo"
+          v-model="post.titulo"
           style="width:50vw;margin:auto;padding-bottom:5em"
           label="Título"
+          min="0"
+          max="100"
         ></v-text-field>
 
         <v-textarea
-          v-model="resumo"
+          v-model="post.resumo"
           class="form-position"
           label="Digite um pequeno resumo do seu post aqui!"
           height="5vh"
           no-resize
         ></v-textarea>
         <v-textarea
-          v-model="descricao"
+          v-model="post.descricao"
           class="form-position"
           label="Digite o conteúdo do seu post aqui!"
           height="30vh"
@@ -33,13 +35,13 @@
         ></v-textarea>
         <v-btn
           v-on:click="
-            criaPost(titulo, descricao, resumo, new Date(), id_categoria)
+            editaPost(post.titulo, post.descricao, post.resumo, post.categoria_id, post.id)
           "
           color="success"
           class="mr-4"
           outlined
         >Salvar</v-btn>
-        <v-btn to="/" color="error" class="mr-4" outlined>Cancelar</v-btn>
+        <v-btn to="/lista" color="error" class="mr-4" outlined>Cancelar</v-btn>
       </v-form>
     </div>
   </div>
@@ -47,7 +49,7 @@
 
 <script>
 export default {
-  name: "CriarPost",
+  name: "EditarPost",
   props: {
     msg: String
   },
@@ -57,7 +59,9 @@ export default {
       descricao: "",
       resumo: "",
       categorias: [],
-      id_categoria: 0
+      id_categoria: 0,
+      id: 0,
+      post: {}
     };
   },
   methods: {
@@ -90,10 +94,42 @@ export default {
           categoria_id: categoria_id
         })
       }).finally(this.$router.push("/"));
+    },
+    async editaPost(titulo, descricao, resumo, categoria_id, id) {
+      fetch("http://192.168.0.10:5000/editaPost", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          titulo: titulo,
+          descricao: descricao,
+          resumo: resumo,
+          categoria_id: categoria_id,
+          id: id
+        })
+      }).finally(this.$router.push("/lista"));
+    },
+
+    async getPostPorId(id) {
+      try {
+        let response = await fetch(
+          "http://192.168.0.10:5000/buscaPostPorId?id=" + id
+        );
+        let responseJson = await response.json();
+        console.log(responseJson[0]);
+        this.post = responseJson[0];
+        return responseJson;
+      } catch (error) {
+        console.error(error);
+      }
     }
   },
 
   mounted() {
+    this.id = this.$route.params.id;
+    this.getPostPorId(this.id);
     this.listaCategorias();
   }
 };
@@ -105,7 +141,6 @@ export default {
   height: 100%;
   min-width: 100%;
 }
-
 .form-position {
   width: 50vw;
   margin: auto;

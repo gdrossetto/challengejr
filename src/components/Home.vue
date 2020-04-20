@@ -1,17 +1,41 @@
 <template>
   <div class="app-container" id="homepage">
-    <div style="padding-top:100px">
+    <div style="margin-top:100px">
       <v-text-field
+        class="form-position"
         color="#37125c"
-        class="home-searchbar"
-        label="Procurar postagem:"
+        label="Procurar post por título:"
         v-model="searchQuery"
       ></v-text-field>
       <v-btn @click="getPostsPorTitulo(searchQuery)" icon color="#37125c">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
-      <v-btn @click="getPosts()" icon color="orange">
-        <v-icon>mdi-reload</v-icon>
+
+      <v-select
+        class="form-position"
+        v-model="idCategoria"
+        :items="categorias"
+        item-value="id"
+        item-text="nome"
+        label="Procurar post por categoria:"
+      ></v-select>
+      <v-btn
+        @click="idCategoria != 0 ? getPostsPorCategoria(idCategoria) : getPosts()"
+        icon
+        color="#37125c"
+      >
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <v-select
+        class="form-position"
+        v-model="tipoTempo"
+        :items="queryTempo"
+        item-value="tipo"
+        item-text="nome"
+        label="Ordenar posts por tempo"
+      ></v-select>
+      <v-btn @click="getPosts()" icon color="#37125c">
+        <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </div>
     <br />
@@ -31,9 +55,7 @@
               class="blog-div"
             >
               <h3 style="color:black">{{ post.titulo }}</h3>
-              <p style="font-size:12px;font-color:light-grey">
-                Postagem feita em {{ post.criado_em }}
-              </p>
+              <p style="font-size:12px;font-color:light-grey">Postagem feita em {{ post.criado_em }}</p>
               <p>{{ post.resumo }}</p>
             </v-card>
           </v-hover>
@@ -47,25 +69,34 @@
 export default {
   name: "HomePage",
   props: {
-    msg: String,
+    msg: String
   },
   data: () => {
     return {
-      posts: posts,
+      posts: [],
       searchQuery: "",
+      categorias: [],
+      queryTempo: [
+        { nome: "Posts mais novos primeiro", tipo: 1 },
+        { nome: "Posts mais antigos primeiro", tipo: 2 }
+      ],
+      tipoTempo: 1,
+      idCategoria: 0
     };
   },
   methods: {
     async getPosts() {
+      let url;
+      if (this.tipoTempo == 1) {
+        url = "http://192.168.0.10:5000/buscaPostsMaisNovo/";
+      } else {
+        url = "http://192.168.0.10:5000/buscaPostsMaisAntigo/";
+      }
       try {
-        let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostsMaisNovo",
-          {
-            mode: "cors",
-          }
-        );
+        let response = await fetch(url);
         let responseJson = await response.json();
         this.posts = responseJson;
+        return responseJson;
       } catch (err) {
         console.error(err.message);
       }
@@ -82,12 +113,41 @@ export default {
         console.error(error);
       }
     },
+    async listaCategorias() {
+      try {
+        let response = await fetch("http://192.168.0.10:5000/listaCategorias", {
+          mode: "cors"
+        });
+        let responseJson = await response.json();
+        this.categorias = responseJson;
+        console.log(this.categorias);
+      } catch (err) {
+        console.error(err.message);
+      }
+    },
+    async getPostsPorCategoria(idCategoria) {
+      try {
+        let response = await fetch(
+          "http://192.168.0.10:5000/buscaPostPorCategoria?categoria_id=" +
+            idCategoria
+        );
+        let responseJson = await response.json();
+        this.posts = responseJson;
+        this.idCategoria = 0;
+        this.tipoTempo = 0;
+        return responseJson;
+      } catch (error) {
+        console.error(error);
+      }
+    }
   },
   created() {
-    setTimeout(() => this.getPosts(), 400);
-  },
+    setTimeout(() => {
+      this.getPosts();
+      this.listaCategorias();
+    }, 400);
+  }
 };
-var posts = [];
 </script>
 
 <style scoped>
@@ -101,7 +161,6 @@ var posts = [];
   margin-bottom: 1.5em;
   left: 0;
   right: 0;
-
   border-color: black;
   border-width: 1.5px;
   border-style: solid;
@@ -110,7 +169,11 @@ var posts = [];
   border-radius: 20px;
   min-height: 150px;
 }
-
+.form-position {
+  width: 20vw;
+  margin: auto;
+  display: inline-block;
+}
 .blog-gridcontainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, 280px);

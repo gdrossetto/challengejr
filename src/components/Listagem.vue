@@ -1,33 +1,60 @@
 <template>
   <div class="app-container" id="postlist">
-    <h1 style="padding:60px">Listagem de posts</h1>
+    <h1 style="padding:70px;display:inline-block">Listagem de posts</h1>
 
     <div>
       <v-text-field
-        color="orange"
-        style="width:50vw;margin:auto;display:inline-block;"
-        label="Procurar postagem:"
+        class="form-position"
+        color="#37125c"
+        label="Procurar post por título:"
+        v-model="searchQuery"
       ></v-text-field>
-      <v-btn icon color="#37125c">
+      <v-btn @click="getPostsPorTitulo(searchQuery)" icon color="#37125c">
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+
+      <v-select
+        class="form-position"
+        v-model="idCategoria"
+        :items="categorias"
+        item-value="id"
+        item-text="nome"
+        label="Procurar post por categoria:"
+      ></v-select>
+      <v-btn
+        @click="idCategoria != 0 ? getPostsPorCategoria(idCategoria) : getPosts()"
+        icon
+        color="#37125c"
+      >
+        <v-icon>mdi-magnify</v-icon>
+      </v-btn>
+      <v-select
+        class="form-position"
+        v-model="tipoTempo"
+        :items="queryTempo"
+        item-value="tipo"
+        item-text="nome"
+        label="Ordenar posts por tempo"
+      ></v-select>
+      <v-btn @click="getPosts()" icon color="#37125c">
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
     </div>
     <br />
-
     <v-btn to="/criar_post" outlined color="#37125c">
       <v-icon>mdi-plus</v-icon>Criar postagem
     </v-btn>
+    <br />
 
     <br />
+
     <br />
     <div style="width:80vw; display:inline-block">
       <div class="blog-flexcontainer">
         <div v-for="post in posts" :key="post.id">
           <v-card shaped raised class="blog-div">
             <h3 style="color:black">{{ post.titulo }}</h3>
-            <p style="font-size:12px;font-color:light-grey">
-              Postagem feita em {{ post.criado_em }}
-            </p>
+            <p style="font-size:12px;font-color:light-grey">Postagem feita em {{ post.criado_em }}</p>
             <p>{{ post.resumo }}</p>
             <div style="justify-content:space-evenly">
               <v-btn
@@ -38,10 +65,15 @@
               >
                 <v-icon>mdi-eye</v-icon>
               </v-btn>
-              <v-btn icon color="blue" style="margin-right:20px">
+              <v-btn
+                :to="{ path: '/editar_post/' + post.id }"
+                icon
+                color="blue"
+                style="margin-right:20px"
+              >
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon color="red">
+              <v-btn @click="deletaPost(post.id)" icon color="red">
                 <v-icon>mdi-trash-can-outline</v-icon>
               </v-btn>
             </div>
@@ -55,41 +87,94 @@
 <script>
 export default {
   name: "PostList",
-  props: {
-    msg: String,
-  },
+
   data: () => {
     return {
-      posts: posts,
+      posts: [],
+      searchQuery: "",
+      categorias: [],
+      queryTempo: [
+        { nome: "Posts mais novos primeiro", tipo: 1 },
+        { nome: "Posts mais antigos primeiro", tipo: 2 }
+      ],
+      tipoTempo: 1,
+      idCategoria: 0
     };
   },
   methods: {
-    createPost(title, desc, date) {
-      posts.push({ title: title, desc: desc, date: date });
-    },
-    async getEventos() {
+    async getPosts() {
+      let url;
+      if (this.tipoTempo == 1) {
+        url = "http://192.168.0.10:5000/buscaPostsMaisNovo/";
+      } else {
+        url = "http://192.168.0.10:5000/buscaPostsMaisAntigo/";
+      }
       try {
-        let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostsMaisNovo/",
-          {
-            mode: "cors",
-          }
-        );
-        console.log(response);
+        let response = await fetch(url);
         let responseJson = await response.json();
-        console.log(responseJson);
         this.posts = responseJson;
         return responseJson;
       } catch (err) {
         console.error(err.message);
       }
     },
+
+    async listaCategorias() {
+      try {
+        let response = await fetch("http://192.168.0.10:5000/listaCategorias", {
+          mode: "cors"
+        });
+        let responseJson = await response.json();
+        this.categorias = responseJson;
+        console.log(this.categorias);
+      } catch (err) {
+        console.error(err.message);
+      }
+    },
+    async getPostsPorCategoria(idCategoria) {
+      try {
+        let response = await fetch(
+          "http://192.168.0.10:5000/buscaPostPorCategoria?categoria_id=" +
+            idCategoria
+        );
+        let responseJson = await response.json();
+        this.posts = responseJson;
+        this.idCategoria = 0;
+        return responseJson;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getPostsPorTitulo(titulo) {
+      try {
+        let response = await fetch(
+          "http://192.168.0.10:5000/buscaPostPorTitulo?titulo=" + titulo
+        );
+        let responseJson = await response.json();
+        this.posts = responseJson;
+        this.searchQuery = "";
+        return responseJson;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async deletaPost(id) {
+      let result = await fetch("http://192.168.0.10:5000/deletaPost?id=" + id, {
+        method: "DELETE"
+      });
+      setTimeout(() => this.getPosts(), 400);
+      console.log(
+        (await result.json())
+          ? "Post deletado com sucesso"
+          : "Falha ao apagar o post"
+      );
+    }
   },
   mounted() {
-    this.getEventos();
-  },
+    this.getPosts();
+    this.listaCategorias();
+  }
 };
-var posts = [];
 </script>
 
 <style scoped>
@@ -116,5 +201,11 @@ var posts = [];
   display: grid;
   grid-template-columns: repeat(auto-fit, 80vw);
   justify-content: space-evenly;
+}
+
+.form-position {
+  width: 20vw;
+  margin: auto;
+  display: inline-block;
 }
 </style>

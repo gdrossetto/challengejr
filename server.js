@@ -5,11 +5,13 @@ var { Client } = require("pg");
 var cors = require("cors");
 var app = express();
 var bodyParser = require("body-parser");
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use(serveStatic(path.join(__dirname, "dist")));
 
 const client = new Client({
+  //informações do banco postgres no heroku
   connectionString: process.env.DATABASE_URL,
   ssl: {
     require: true,
@@ -120,14 +122,15 @@ app.post("/criaCategoria", async (req, res) => {
   let result = {};
   try {
     const reqJson = req.body;
-    await criaCategoria(reqJson.nome);
-    result.success = true;
+    if (reqJson.nome.length > 0)
+      result.success = await criaCategoria(reqJson.nome);
+    else result.success = false;
   } catch (e) {
     console.error(e.message);
     result.success = false;
   } finally {
     res.setHeader("content-type", "application/json");
-    res.send(JSON.stringify(result));
+    res.send(JSON.stringify(result.success));
   }
 });
 
@@ -135,28 +138,27 @@ app.post("/editaCategoria", async (req, res) => {
   let result = {};
   try {
     const reqJson = req.body;
-    await editaCategoria(reqJson.nome, reqJson.id);
-    result.success = true;
+    result.success = await editaCategoria(reqJson.nome, reqJson.id);
   } catch (e) {
     console.error(e.message);
     result.success = false;
   } finally {
     res.setHeader("content-type", "application/json");
-    res.send(JSON.stringify(result));
+    res.send(JSON.stringify(result.success));
   }
 });
 
 app.delete("/deletaCategoria", async (req, res) => {
   let result = {};
   try {
-    await deletaCategoria(req.query.id);
-    result.success = true;
+    result.success = await deletaCategoria(req.query.id);
+    //result.success = true;
   } catch (e) {
     console.error(e.message);
     result.success = false;
   } finally {
     res.setHeader("content-type", "application/json");
-    res.send(JSON.stringify(result));
+    res.send(JSON.stringify(result.success));
   }
 });
 
@@ -240,7 +242,7 @@ async function criaPost(titulo, descricao, resumo, data, categoria_id) {
 async function editaPost(titulo, descricao, resumo, categoria_id, id) {
   try {
     await client.query(
-      "UPDATE post set title = $1, descricao = $2, resumo = $3, categoria_id = $4 where id = $5;",
+      "UPDATE post set titulo = $1, descricao = $2, resumo = $3, categoria_id = $4 where id = $5;",
       [titulo, descricao, resumo, categoria_id, id]
     );
     return true;
@@ -308,7 +310,7 @@ async function deletaCategoria(id) {
 async function buscaPostPorCategoria(categoria_id) {
   try {
     const results = await client.query(
-      "SELECT p.*,c.nome as categoria_nome from post as p inner join categoria as c on p.categoria_id = c.id where p.categoria_id = $1 order by criado_em desc;",
+      "SELECT p.*,c.nome as categoria_nome, to_char( criado_em, 'DD/MM/YYYY') as criado_em from post as p inner join categoria as c on p.categoria_id = c.id where p.categoria_id = $1 order by p.id desc;",
       [categoria_id]
     );
     return results.rows;
