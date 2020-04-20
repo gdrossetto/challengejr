@@ -6,7 +6,7 @@
           <v-app-bar-nav-icon style="color:white" @click="drawer = !drawer"></v-app-bar-nav-icon>
         </v-col>
         <v-col>
-          <v-toolbar-title class="titulo-appbar">Desafio Ez.Devs</v-toolbar-title>
+          <v-toolbar-title class="titulo-appbar">Blog</v-toolbar-title>
         </v-col>
         <v-col></v-col>
       </v-row>
@@ -20,11 +20,7 @@
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title style="color:#37125c">
-              {{
-              item.title
-              }}
-            </v-list-item-title>
+            <v-list-item-title style="color:#37125c">{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
