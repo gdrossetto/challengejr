@@ -140,6 +140,7 @@ export default {
         let responseJson = await response.json();
         this.posts = responseJson;
         this.idCategoria = 0;
+
         return responseJson;
       } catch (error) {
         console.error(error);
