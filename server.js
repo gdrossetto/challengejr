@@ -8,7 +8,7 @@ var bodyParser = require("body-parser");
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(serveStatic(path.join(__dirname, "dist")));
+app.use(serveStatic(path.join(__dirname, "dist"))); //rodando webapp no servidor após build
 
 const client = new Client({
   //informações do banco postgres no heroku
