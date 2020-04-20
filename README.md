@@ -1,24 +1,22 @@
 # Desafio fullstack blog Vue Ez.Devs - Gabriel Rossetto
 
-# Aplicação disponível em http://challengejr.herokuapp.com/
+# Aplicação hospedada e disponível em http://challengejr.herokuapp.com/
 
 ## Aplicação desenvolvida em : 
 ### Frontend : Vue
-### Backend : NodeJs/Express, PostgreSQL
+### Backend : API desenvolvida em NodeJs/Express (arquivo server.js) e banco de dados PostgreSQL(modelagem exemplificada no arquivo blogdb.sql)
 
-## Instalar dependências
+
+
+
+## Após clonar o repositório, instalar dependências no projeto
 ```
 npm install
 ```
 
-### Rodar aplicação no servidor local
+### Para rodar aplicação no servidor local
 ```
 npm run serve
 ```
 
-### Compilar para produção 
-```
-npm run build
-```
 
-```
