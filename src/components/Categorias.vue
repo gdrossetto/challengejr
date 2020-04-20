@@ -2,14 +2,22 @@
   <div class="app-container">
     <div style="width:100vw; display:inline-block;margin-top:100px">
       <div style="display: inline-block">
-        <v-text-field v-model="nome" style="margin:auto;" label="Crie aqui uma categoria"></v-text-field>
+        <v-text-field
+          v-model="nome"
+          style="margin:auto;"
+          label="Crie aqui uma categoria"
+        ></v-text-field>
         <v-btn @click="criaCategoria(nome)" outlined color="#37125c">
           <v-icon>mdi-plus</v-icon>Criar categoria
         </v-btn>
         <v-list>
           <v-list-item v-for="categoria in categorias" :key="categoria.id">
             <h3 style="padding-right:10px">{{ categoria.nome }}</h3>
-            <v-btn @click="setEdicao(categoria.id, categoria.nome)" icon color="blue">
+            <v-btn
+              @click="setEdicao(categoria.id, categoria.nome)"
+              icon
+              color="blue"
+            >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
             <v-btn @click="deletaCategoria(categoria.id)" icon color="red">
@@ -36,7 +44,12 @@
         >
           <v-icon>mdi-check</v-icon>Salvar
         </v-btn>
-        <v-btn style="margin-bottom:20px" @click="dialog = !dialog" outlined color="red">
+        <v-btn
+          style="margin-bottom:20px"
+          @click="dialog = !dialog"
+          outlined
+          color="red"
+        >
           <v-icon>mdi-close</v-icon>Cancelar
         </v-btn>
       </v-card>
@@ -54,15 +67,18 @@ export default {
       nome: "",
       dialog: false,
       id_categoria_editada: 0,
-      nome_categoria_editada: ""
+      nome_categoria_editada: "",
     };
   },
   methods: {
     async listaCategorias() {
       try {
-        let response = await fetch("http://192.168.0.10:5000/listaCategorias", {
-          mode: "cors"
-        });
+        let response = await fetch(
+          "https://challengejr.herokuapp.com/listaCategorias",
+          {
+            mode: "cors",
+          }
+        );
         let responseJson = await response.json();
         this.categorias = responseJson;
       } catch (err) {
@@ -70,16 +86,19 @@ export default {
       }
     },
     async criaCategoria(nome) {
-      let result = await fetch("http://192.168.0.10:5000/criaCategoria", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          nome: nome
-        })
-      });
+      let result = await fetch(
+        "https://challengejr.herokuapp.com/criaCategoria",
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            nome: nome,
+          }),
+        }
+      );
       this.nome = "";
       setTimeout(() => this.listaCategorias(), 400);
       console.log(
@@ -90,9 +109,9 @@ export default {
     },
     async deletaCategoria(id) {
       let result = await fetch(
-        "http://192.168.0.10:5000/deletaCategoria?id=" + id,
+        "https://challengejr.herokuapp.com/deletaCategoria?id=" + id,
         {
-          method: "DELETE"
+          method: "DELETE",
         }
       );
       setTimeout(() => this.listaCategorias(), 400);
@@ -110,24 +129,24 @@ export default {
     },
 
     editaCategoria(id, nome) {
-      fetch("http://192.168.0.10:5000/editaCategoria", {
+      fetch("https://challengejr.herokuapp.com/editaCategoria", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "content-Type": "application/json"
+          "content-Type": "application/json",
         },
         body: JSON.stringify({
           id: id,
-          nome: nome
-        })
+          nome: nome,
+        }),
       });
       this.dialog = false;
       setTimeout(() => this.listaCategorias(), 400);
-    }
+    },
   },
   mounted() {
     this.listaCategorias();
-  }
+  },
 };
 </script>
 

@@ -5,7 +5,9 @@
       <h1 class="post-titulo">{{ post.titulo }}</h1>
       <p style="color:grey">{{ post.resumo }}</p>
       <v-divider class="post-divider"></v-divider>
-      <v-subheader style="display:inline-block">Publicado em {{ post.criado_em }}</v-subheader>
+      <v-subheader style="display:inline-block"
+        >Publicado em {{ post.criado_em }}</v-subheader
+      >
     </div>
     <p class="post-descricao">{{ post.descricao }}</p>
   </div>
@@ -15,7 +17,7 @@
 export default {
   name: "PaginaPost",
   props: {
-    msg: String
+    msg: String,
   },
   data: () => {
     return {
@@ -23,16 +25,16 @@ export default {
       descricao: "",
       resumo: "",
       id: 0,
-      post: {}
+      post: {},
     };
   },
   methods: {
     createPost(titulo, descricao, resumo, criado_em, categoria_id) {
-      fetch("http://192.168.0.10:5000/criaPost", {
+      fetch("https://challengejr.herokuapp.com/criaPost", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "content-Type": "application/json"
+          "content-Type": "application/json",
         },
         body: JSON.stringify({
           titulo: name,
@@ -40,14 +42,14 @@ export default {
           resumo: resumo,
           criado_em: criado_em,
           categoria_id: categoria_id,
-          post: {}
-        })
+          post: {},
+        }),
       }).finally(this.$router.push("/"));
     },
     async getPostPorId(id) {
       try {
         let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostPorId?id=" + id
+          "https://challengejr.herokuapp.com/buscaPostPorId?id=" + id
         );
         let responseJson = await response.json();
         console.log(responseJson[0]);
@@ -56,13 +58,13 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    }
+    },
   },
 
   mounted() {
     this.id = this.$route.params.id;
     this.getPostPorId(this.id);
-  }
+  },
 };
 </script>
 

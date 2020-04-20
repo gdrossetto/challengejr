@@ -20,7 +20,9 @@
         label="Procurar post por categoria:"
       ></v-select>
       <v-btn
-        @click="idCategoria != 0 ? getPostsPorCategoria(idCategoria) : getPosts()"
+        @click="
+          idCategoria != 0 ? getPostsPorCategoria(idCategoria) : getPosts()
+        "
         icon
         color="#37125c"
       >
@@ -55,7 +57,9 @@
               class="blog-div"
             >
               <h3 style="color:black">{{ post.titulo }}</h3>
-              <p style="font-size:12px;font-color:light-grey">Postagem feita em {{ post.criado_em }}</p>
+              <p style="font-size:12px;font-color:light-grey">
+                Postagem feita em {{ post.criado_em }}
+              </p>
               <p>{{ post.resumo }}</p>
             </v-card>
           </v-hover>
@@ -69,7 +73,7 @@
 export default {
   name: "HomePage",
   props: {
-    msg: String
+    msg: String,
   },
   data: () => {
     return {
@@ -78,19 +82,19 @@ export default {
       categorias: [],
       queryTempo: [
         { nome: "Posts mais novos primeiro", tipo: 1 },
-        { nome: "Posts mais antigos primeiro", tipo: 2 }
+        { nome: "Posts mais antigos primeiro", tipo: 2 },
       ],
       tipoTempo: 1,
-      idCategoria: 0
+      idCategoria: 0,
     };
   },
   methods: {
     async getPosts() {
       let url;
       if (this.tipoTempo == 1) {
-        url = "http://192.168.0.10:5000/buscaPostsMaisNovo/";
+        url = "https://challengejr.herokuapp.com/buscaPostsMaisNovo/";
       } else {
-        url = "http://192.168.0.10:5000/buscaPostsMaisAntigo/";
+        url = "https://challengejr.herokuapp.com/buscaPostsMaisAntigo/";
       }
       try {
         let response = await fetch(url);
@@ -104,7 +108,8 @@ export default {
     async getPostsPorTitulo(titulo) {
       try {
         let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostPorTitulo?titulo=" + titulo
+          "https://challengejr.herokuapp.com/buscaPostPorTitulo?titulo=" +
+            titulo
         );
         let responseJson = await response.json();
         this.posts = responseJson;
@@ -115,9 +120,12 @@ export default {
     },
     async listaCategorias() {
       try {
-        let response = await fetch("http://192.168.0.10:5000/listaCategorias", {
-          mode: "cors"
-        });
+        let response = await fetch(
+          "https://challengejr.herokuapp.com/listaCategorias",
+          {
+            mode: "cors",
+          }
+        );
         let responseJson = await response.json();
         this.categorias = responseJson;
         console.log(this.categorias);
@@ -128,7 +136,7 @@ export default {
     async getPostsPorCategoria(idCategoria) {
       try {
         let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostPorCategoria?categoria_id=" +
+          "https://challengejr.herokuapp.com/buscaPostPorCategoria?categoria_id=" +
             idCategoria
         );
         let responseJson = await response.json();
@@ -139,14 +147,14 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    }
+    },
   },
   created() {
     setTimeout(() => {
       this.getPosts();
       this.listaCategorias();
     }, 400);
-  }
+  },
 };
 </script>
 

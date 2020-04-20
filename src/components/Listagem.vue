@@ -22,7 +22,9 @@
         label="Procurar post por categoria:"
       ></v-select>
       <v-btn
-        @click="idCategoria != 0 ? getPostsPorCategoria(idCategoria) : getPosts()"
+        @click="
+          idCategoria != 0 ? getPostsPorCategoria(idCategoria) : getPosts()
+        "
         icon
         color="#37125c"
       >
@@ -54,7 +56,9 @@
         <div v-for="post in posts" :key="post.id">
           <v-card shaped raised class="blog-div">
             <h3 style="color:black">{{ post.titulo }}</h3>
-            <p style="font-size:12px;font-color:light-grey">Postagem feita em {{ post.criado_em }}</p>
+            <p style="font-size:12px;font-color:light-grey">
+              Postagem feita em {{ post.criado_em }}
+            </p>
             <p>{{ post.resumo }}</p>
             <div style="justify-content:space-evenly">
               <v-btn
@@ -95,19 +99,19 @@ export default {
       categorias: [],
       queryTempo: [
         { nome: "Posts mais novos primeiro", tipo: 1 },
-        { nome: "Posts mais antigos primeiro", tipo: 2 }
+        { nome: "Posts mais antigos primeiro", tipo: 2 },
       ],
       tipoTempo: 1,
-      idCategoria: 0
+      idCategoria: 0,
     };
   },
   methods: {
     async getPosts() {
       let url;
       if (this.tipoTempo == 1) {
-        url = "http://192.168.0.10:5000/buscaPostsMaisNovo/";
+        url = "https://challengejr.herokuapp.com/buscaPostsMaisNovo/";
       } else {
-        url = "http://192.168.0.10:5000/buscaPostsMaisAntigo/";
+        url = "https://challengejr.herokuapp.com/buscaPostsMaisAntigo/";
       }
       try {
         let response = await fetch(url);
@@ -121,9 +125,12 @@ export default {
 
     async listaCategorias() {
       try {
-        let response = await fetch("http://192.168.0.10:5000/listaCategorias", {
-          mode: "cors"
-        });
+        let response = await fetch(
+          "https://challengejr.herokuapp.com/listaCategorias",
+          {
+            mode: "cors",
+          }
+        );
         let responseJson = await response.json();
         this.categorias = responseJson;
         console.log(this.categorias);
@@ -134,7 +141,7 @@ export default {
     async getPostsPorCategoria(idCategoria) {
       try {
         let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostPorCategoria?categoria_id=" +
+          "https://challengejr.herokuapp.com/buscaPostPorCategoria?categoria_id=" +
             idCategoria
         );
         let responseJson = await response.json();
@@ -149,7 +156,8 @@ export default {
     async getPostsPorTitulo(titulo) {
       try {
         let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostPorTitulo?titulo=" + titulo
+          "https://challengejr.herokuapp.com/buscaPostPorTitulo?titulo=" +
+            titulo
         );
         let responseJson = await response.json();
         this.posts = responseJson;
@@ -160,21 +168,24 @@ export default {
       }
     },
     async deletaPost(id) {
-      let result = await fetch("http://192.168.0.10:5000/deletaPost?id=" + id, {
-        method: "DELETE"
-      });
+      let result = await fetch(
+        "https://challengejr.herokuapp.com/deletaPost?id=" + id,
+        {
+          method: "DELETE",
+        }
+      );
       setTimeout(() => this.getPosts(), 400);
       console.log(
         (await result.json())
           ? "Post deletado com sucesso"
           : "Falha ao apagar o post"
       );
-    }
+    },
   },
   mounted() {
     this.getPosts();
     this.listaCategorias();
-  }
+  },
 };
 </script>
 

@@ -35,12 +35,19 @@
         ></v-textarea>
         <v-btn
           v-on:click="
-            editaPost(post.titulo, post.descricao, post.resumo, post.categoria_id, post.id)
+            editaPost(
+              post.titulo,
+              post.descricao,
+              post.resumo,
+              post.categoria_id,
+              post.id
+            )
           "
           color="success"
           class="mr-4"
           outlined
-        >Salvar</v-btn>
+          >Salvar</v-btn
+        >
         <v-btn to="/lista" color="error" class="mr-4" outlined>Cancelar</v-btn>
       </v-form>
     </div>
@@ -51,7 +58,7 @@
 export default {
   name: "EditarPost",
   props: {
-    msg: String
+    msg: String,
   },
   data: () => {
     return {
@@ -61,15 +68,18 @@ export default {
       categorias: [],
       id_categoria: 0,
       id: 0,
-      post: {}
+      post: {},
     };
   },
   methods: {
     async listaCategorias() {
       try {
-        let response = await fetch("http://192.168.0.10:5000/listaCategorias", {
-          mode: "cors"
-        });
+        let response = await fetch(
+          "https://challengejr.herokuapp.com/listaCategorias",
+          {
+            mode: "cors",
+          }
+        );
         let responseJson = await response.json();
         this.categorias = responseJson;
         console.log(this.categorias);
@@ -80,42 +90,42 @@ export default {
     criaPost(titulo, descricao, resumo, criado_em, categoria_id) {
       let data = new Date();
       let dataCriacao = data.toLocaleString();
-      fetch("http://192.168.0.10:5000/criaPost", {
+      fetch("https://challengejr.herokuapp.com/criaPost", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "content-Type": "application/json"
+          "content-Type": "application/json",
         },
         body: JSON.stringify({
           titulo: titulo,
           descricao: descricao,
           resumo: resumo,
           criado_em: dataCriacao,
-          categoria_id: categoria_id
-        })
+          categoria_id: categoria_id,
+        }),
       }).finally(this.$router.push("/"));
     },
     async editaPost(titulo, descricao, resumo, categoria_id, id) {
-      fetch("http://192.168.0.10:5000/editaPost", {
+      fetch("https://challengejr.herokuapp.com/editaPost", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "content-Type": "application/json"
+          "content-Type": "application/json",
         },
         body: JSON.stringify({
           titulo: titulo,
           descricao: descricao,
           resumo: resumo,
           categoria_id: categoria_id,
-          id: id
-        })
+          id: id,
+        }),
       }).finally(this.$router.push("/lista"));
     },
 
     async getPostPorId(id) {
       try {
         let response = await fetch(
-          "http://192.168.0.10:5000/buscaPostPorId?id=" + id
+          "https://challengejr.herokuapp.com/buscaPostPorId?id=" + id
         );
         let responseJson = await response.json();
         console.log(responseJson[0]);
@@ -124,14 +134,14 @@ export default {
       } catch (error) {
         console.error(error);
       }
-    }
+    },
   },
 
   mounted() {
     this.id = this.$route.params.id;
     this.getPostPorId(this.id);
     this.listaCategorias();
-  }
+  },
 };
 </script>
 

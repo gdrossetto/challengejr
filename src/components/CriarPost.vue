@@ -38,7 +38,8 @@
           color="success"
           class="mr-4"
           outlined
-        >Salvar</v-btn>
+          >Salvar</v-btn
+        >
         <v-btn to="/" color="error" class="mr-4" outlined>Cancelar</v-btn>
       </v-form>
     </div>
@@ -49,7 +50,7 @@
 export default {
   name: "CriarPost",
   props: {
-    msg: String
+    msg: String,
   },
   data: () => {
     return {
@@ -57,15 +58,18 @@ export default {
       descricao: "",
       resumo: "",
       categorias: [],
-      id_categoria: 0
+      id_categoria: 0,
     };
   },
   methods: {
     async listaCategorias() {
       try {
-        let response = await fetch("http://192.168.0.10:5000/listaCategorias", {
-          mode: "cors"
-        });
+        let response = await fetch(
+          "https://challengejr.herokuapp.com/listaCategorias",
+          {
+            mode: "cors",
+          }
+        );
         let responseJson = await response.json();
         this.categorias = responseJson;
         console.log(this.categorias);
@@ -76,26 +80,26 @@ export default {
     criaPost(titulo, descricao, resumo, criado_em, categoria_id) {
       let data = new Date();
       let dataCriacao = data.toLocaleString();
-      fetch("http://192.168.0.10:5000/criaPost", {
+      fetch("https://challengejr.herokuapp.com/criaPost", {
         method: "POST",
         headers: {
           Accept: "application/json",
-          "content-Type": "application/json"
+          "content-Type": "application/json",
         },
         body: JSON.stringify({
           titulo: titulo,
           descricao: descricao,
           resumo: resumo,
           criado_em: dataCriacao,
-          categoria_id: categoria_id
-        })
+          categoria_id: categoria_id,
+        }),
       }).finally(this.$router.push("/"));
-    }
+    },
   },
 
   mounted() {
     this.listaCategorias();
-  }
+  },
 };
 </script>
 
