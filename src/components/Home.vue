@@ -41,7 +41,6 @@
       </v-btn>
     </div>
     <br />
-
     <br />
     <br />
     <div style="width:80vw; display:inline-block">
