@@ -1,4 +1,4 @@
-# challengejr
+# Desafio fullstack blog Vue Ez.Devs - Gabriel Rossetto
 
 # Aplicação disponível em http://challengejr.herokuapp.com/
 
@@ -22,6 +22,3 @@ npm run build
 ```
 
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
