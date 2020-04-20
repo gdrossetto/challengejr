@@ -1,23 +1,26 @@
 # challengejr
 
-## Project setup
+# Aplicação disponível em http://challengejr.herokuapp.com/
+
+## Aplicação desenvolvida em : 
+### Frontend : Vue
+### Backend : NodeJs/Express, PostgreSQL
+
+## Instalar dependências
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Rodar aplicação no servidor local
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compilar para produção 
 ```
 npm run build
 ```
 
-### Lints and fixes files
-```
-npm run lint
 ```
 
 ### Customize configuration
